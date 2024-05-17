@@ -98,6 +98,6 @@ def decide(gameState: GameState) -> List[PlayerAction]:
     our_bases, other_bases, empty_bases = filter_bases(bases, our_player)
     
 
-    return attack(other_bases,our_bases.append(empty_bases),gameState.config)
+    return attack(other_bases, our_bases + empty_bases, gameState.config)
 
     
