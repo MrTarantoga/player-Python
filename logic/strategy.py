@@ -94,8 +94,8 @@ def decide(gameState: GameState) -> List[PlayerAction]:
 
     bases = gameState.bases
 
-    global minDefenders 
-    minDefenders = populationAverage(bases)/2
+    #global minDefenders 
+    #minDefenders = populationAverage(bases)/2
     our_bases, other_bases, empty_bases = filter_bases(bases, our_player)
     
 

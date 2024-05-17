@@ -85,13 +85,14 @@ class TestStrategy(unittest.TestCase):
 
     def test_filter_bases(self):
         result_our, result_other, result_empty = filter_bases(self.enemy_bases, self.our_player)
-        self.assertEqual(str(want), str(result_our))
-        self.assertEqual(str(want), str(result_other))
-        self.assertEqual(str(self.enemy_bases), str(result_empty))
-
-        want = self.our_bases
-        result = filter_bases(self.our_bases + self.enemy_bases, self.our_player)
-        self.assertEqual(str(want), str(self.our_bases))
+        self.assertEqual(str([]), str(result_our))
+        self.assertEqual(str(self.enemy_bases), str(result_other))
+        self.assertEqual(str([]), str(result_empty))
+        
+        result_our, result_other, result_empty = filter_bases(self.our_bases + self.enemy_bases, self.our_player)
+        self.assertEqual(str(self.our_bases), str(result_our))
+        self.assertEqual(str(self.enemy_bases), str(result_other))
+        self.assertEqual(str([]), str(result_empty))
 
 
     def test_survivors(self):
@@ -105,11 +106,11 @@ class TestStrategy(unittest.TestCase):
         self.assertEqual(8, surv)
 
 
-    # def test_defendersAtTime(self):
-    #     base = Base.fromAttributes(Position.fromAttributes(5, 0, 1), 0, 2, 2, 0, 0)
-
-    #     want = 0
-    #     result = defendersAtTime(1, )
+    def test_defendersAtTime(self):
+        # base_level 1 --> spawn_rate 
+        base = Base.fromAttributes(Position.fromAttributes(5, 0, 1), 0, 2, 2, 1, 0)
+        want = 0
+        result = defendersAtTime(1, base, self.game_config)
 
     def test_attack(self):
         pass
