@@ -28,5 +28,5 @@ class GameState:
         for base in gameState['bases']:
             self.bases.append(Base(base))
 
-        self.config = gameState['config']
-        self.game = gameState['game']
+        self.config = GameConfig(gameState['config'])
+        self.game = Game(gameState['game'])
