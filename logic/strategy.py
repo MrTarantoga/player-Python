@@ -89,7 +89,7 @@ def decide(gameState: GameState) -> List[PlayerAction]:
     # TODO: place your logic here
     
     # Our player
-    our_player = gameState.game.player
+    our_player = 2#gameState.game.player
 
     bases = gameState.bases
 
