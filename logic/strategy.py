@@ -88,8 +88,6 @@ def attack(otherBases: list[Base], ourBases: list[Base], config: GameConfig) -> 
 def decide(gameState: GameState) -> List[PlayerAction]:
     # TODO: place your logic here
     
-    print(gameState.game)
-    print(gameState)
     # Our player
     our_player = gameState.game.player
 
