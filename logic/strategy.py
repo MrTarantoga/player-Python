@@ -29,8 +29,6 @@ def filter_bases(bases: list[Base], our_player: int) -> tuple[list[Base], list[B
     for base in bases:
         if base.player == our_player:
             our_bases.append(base)
-        elif base.player == 0:
-            empty_bases.append(base)
         else:
             other_bases.append(base)
     
