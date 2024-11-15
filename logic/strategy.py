@@ -153,7 +153,8 @@ def iterate_bases(otherBases: list[Base], ourBases: list[Base], config: GameConf
                 if ourBase.level < max_level:
                     if ourBase.population > (config.base_levels[ourBase.level].max_population * keep_population_during_upgrade):
                         # Upgrade ally base
-                        bits_to_upgrade = min([ourBase.units_until_upgrade, ourBase.population - (config.base_levels[ourBase.level].max_population * keep_population_during_upgrade)])
+                        bits_until_upgrade = config.base_levels[ourBase.level].upgrade_cost - ourBase.units_until_upgrade
+                        bits_to_upgrade = min([bits_until_upgrade, ourBase.population - (config.base_levels[ourBase.level].max_population * keep_population_during_upgrade)])
                         bestTargetBase.append(PlayerAction(ourBase.uid, ourBase.uid, bits_to_upgrade))
                 break
     
