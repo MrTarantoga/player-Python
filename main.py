@@ -75,4 +75,6 @@ def index():
 
     game_state = GameState(actions, bases, game_config, game)
 
-    return jsonify([action.serialize() for action in decide(game_state)])
+    res = [action.serialize() for action in decide(game_state)]
+    app.logger.info('Actions: %s', res)
+    return jsonify(res)

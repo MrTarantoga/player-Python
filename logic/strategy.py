@@ -118,8 +118,10 @@ def add_population_of_enemy_at_start(allBases_distanceCosts: pd.DataFrame, allBa
     population = population["population"]
     return (allBases_distanceCosts.add(population, axis=0))
 
-# Generate Array with ale enemies and the costs to conquer them
+# Generate Array with all enemies and the costs to conquer them
 def iterate_bases(otherBases: list[Base], ourBases: list[Base], config: GameConfig) -> list[PlayerAction]:
+    keep_population_during_upgrade = 0.5
+    additional_bits_during_attack = 1
     bestTargetBase: list[PlayerAction]  = []
 
     #allBases = pd.DataFrame(data)
@@ -142,12 +144,15 @@ def iterate_bases(otherBases: list[Base], ourBases: list[Base], config: GameConf
         for possibleTargetIndex, possibleTarget in possibleTargets.items():
             if possibleTarget < ourBase.population:
                 # add enemy as target
-                bestTargetBase.append(PlayerAction(ourBase.uid, possibleTargetIndex[0], possibleTarget + 1))
+                bestTargetBase.append(PlayerAction(ourBase.uid, possibleTargetIndex[0], possibleTarget + additional_bits_during_attack))
                 # reduce population of our ally
-                ourBase.population -= possibleTarget + 1
+                ourBase.population -= possibleTarget + additional_bits_during_attack
                 # eliminate enemy from possible targets (next ally must attack other enemies)
                 allBases_distanceCosts.drop([possibleTargetIndex])
             else:
+                if ourBase.population > (config.base_levels[ourBase.level].max_population * keep_population_during_upgrade):
+                    # Upgrade ally base
+                    bestTargetBase.append(PlayerAction(ourBase.uid, ourBase.uid, ourBase.population - (config.base_levels[ourBase.level].max_population * keep_population_during_upgrade)))
                 break
     
     return bestTargetBase
