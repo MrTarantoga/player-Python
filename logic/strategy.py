@@ -63,7 +63,7 @@ def populationAverage(bases: list[Base]):
 
     return basesPopulation/len(bases)
 
-def getEnemyValues(otherBases: list[Base], config: GameConfig):
+def get_enemy_values(otherBases: list[Base], config: GameConfig):
     data = {}
     enemyUid = []
     enemyGrowthRate = []
@@ -83,13 +83,7 @@ def getEnemyValues(otherBases: list[Base], config: GameConfig):
 
     return data
 
-# Generate Array with ale enemies and the costs to conquer them
-def iterateBases(otherBases: list[Base], ourBases: list[Base], config: GameConfig) -> list[PlayerAction]:
-    bestTargetBase: list[PlayerAction]  = []
-
-    #allBases = pd.DataFrame(data)
-    data = getEnemyValues(otherBases, config)
-
+def get_enemy_distance(data: dict, otherBases: list[Base], ourBases: list[Base]) -> dict:
     for ourBase in ourBases:
         enemydist = []
         for targetBase in otherBases:
@@ -97,17 +91,50 @@ def iterateBases(otherBases: list[Base], ourBases: list[Base], config: GameConfi
             #enemydist[targetBase.uid] = (get_base_distance(ourBase,targetBase) - config.paths.grace_period)
             enemydist.append(get_base_distance(ourBase,targetBase))
         data[ourBase.uid] = enemydist
+    return data
 
+def generate_base_costs(data: dict):
     allBases = pd.DataFrame(data)
     allBases = allBases.set_index(["index", "growth_rate", "max_population", "population"])
-    allBases_distanceCosts = allBases.copy()
-    # add death_rate for euclidean distance to enemy
-    allBases_distanceCosts = (allBases_distanceCosts.loc[:] - config.paths.grace_period).clip(lower=0) * config.paths.death_rate
+    return allBases
 
-    # add gain of enemy during travel (TODO: cap gain by max_population)
-    allBases_distanceCosts = allBases_distanceCosts.loc[:] + (allBases * allBases.index.get_level_values("growth_rate"))
-    # add population of enemy at travel start
-    allBases_distanceCosts = allBases_distanceCosts.loc[:] + allBases.index.get_level_values("population")
+# add death_rate for euclidean distance to enemy
+def add_death_rate(allBases_distanceCosts: pd.DataFrame, config: GameConfig):
+    return ((allBases_distanceCosts.loc[:] - config.paths.grace_period).clip(lower=0) * config.paths.death_rate)
+
+# add gain of enemy during travel (TODO: cap gain by max_population)
+def add_gain_of_enemy(allBases_distanceCosts: pd.DataFrame, allBases: pd.DataFrame):
+    #return (allBases_distanceCosts.add(allBases.dot(allBases.index.get_level_values("growth_rate").to_numpy())))
+    growth = allBases.copy()
+    growth["growth"] = allBases.index.get_level_values("growth_rate")
+    growth = growth["growth"]
+    return (allBases_distanceCosts.add(allBases.mul(growth, axis=0)))
+
+# add population of enemy at travel start
+def add_population_of_enemy_at_start(allBases_distanceCosts: pd.DataFrame, allBases: pd.DataFrame):
+    #return (allBases_distanceCosts.add(allBases.index.get_level_values("population")))
+    population = allBases.copy()
+    population["population"] = allBases.index.get_level_values("population")
+    population = population["population"]
+    return (allBases_distanceCosts.add(population, axis=0))
+
+# Generate Array with ale enemies and the costs to conquer them
+def iterate_bases(otherBases: list[Base], ourBases: list[Base], config: GameConfig) -> list[PlayerAction]:
+    bestTargetBase: list[PlayerAction]  = []
+
+    #allBases = pd.DataFrame(data)
+    data = get_enemy_values(otherBases, config)
+
+    data = get_enemy_distance(data, otherBases, ourBases)
+
+    allBases = generate_base_costs(data)
+    allBases_distanceCosts = allBases.copy()
+    
+    allBases_distanceCosts = add_death_rate(allBases_distanceCosts, config)
+
+    allBases_distanceCosts = add_gain_of_enemy(allBases_distanceCosts, allBases)
+
+    allBases_distanceCosts = add_population_of_enemy_at_start(allBases_distanceCosts, allBases)
 
     # search for all possible targets
     for ourBase in ourBases:
@@ -138,6 +165,6 @@ def decide(gameState: GameState) -> List[PlayerAction]:
     #minDefenders = populationAverage(bases)/2
     our_bases, other_bases, empty_bases = filter_bases(bases, our_player)
     
-    return iterateBases(other_bases, our_bases + empty_bases, gameState.config)
+    return iterate_bases(other_bases, our_bases + empty_bases, gameState.config)
 
     
