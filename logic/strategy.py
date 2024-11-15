@@ -142,7 +142,7 @@ def iterate_bases(otherBases: list[Base], ourBases: list[Base], config: GameConf
         for possibleTargetIndex, possibleTarget in possibleTargets.items():
             if possibleTarget < ourBase.population:
                 # add enemy as target
-                bestTargetBase.append([ourBase.uid, possibleTargetIndex[0], possibleTarget + 1])
+                bestTargetBase.append(PlayerAction(ourBase.uid, possibleTargetIndex[0], possibleTarget + 1))
                 # reduce population of our ally
                 ourBase.population -= possibleTarget + 1
                 # eliminate enemy from possible targets (next ally must attack other enemies)
