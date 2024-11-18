@@ -138,7 +138,7 @@ def iterate_bases(otherBases: list[Base], ourBases: list[Base], config: GameConf
 
     allBases_distanceCosts = add_population_of_enemy_at_start(allBases_distanceCosts, allBases)
 
-    # search for all possible targets
+    # search for all possible targets of single allies
     for ourBase in ourBases:
         possibleTargets = allBases_distanceCosts[ourBase.uid].sort_values(ascending=True).copy()
         for possibleTargetIndex, possibleTarget in possibleTargets.items():
@@ -151,13 +151,15 @@ def iterate_bases(otherBases: list[Base], ourBases: list[Base], config: GameConf
                 allBases_distanceCosts.drop([possibleTargetIndex])
             else:
                 if ourBase.level < max_level:
+                    # Upgrade ally base
                     if ourBase.population > (config.base_levels[ourBase.level].max_population * keep_population_during_upgrade):
-                        # Upgrade ally base
+                        # check if we need less bits then available
                         bits_until_upgrade = config.base_levels[ourBase.level].upgrade_cost - ourBase.units_until_upgrade
                         bits_to_upgrade = min([bits_until_upgrade, ourBase.population - (config.base_levels[ourBase.level].max_population * keep_population_during_upgrade)])
+                        # upgrade
                         bestTargetBase.append(PlayerAction(ourBase.uid, ourBase.uid, bits_to_upgrade))
                 break
-    
+                   
     return bestTargetBase
 
 
