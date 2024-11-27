@@ -9,20 +9,22 @@ def compute_euclid_distance(src_pos: tuple[int, int, int], dest_pos: tuple[int, 
 
 @dataclass
 class Base():
-    id: int
+    uid: int
     name: str
+    player: int
     population: int
     units_until_upgrade: int
     position: tuple[int, int, int]
     level: int
 
-    def __init__(self, id: int, name: str, population: int, units_until_upgrade: int,
+    def __init__(self, uid: int, name: str, player: str, population: int, units_until_upgrade: int,
                  position: tuple[int, int, int], level: int):
         assert population >= 0, "Population cannot be negativ"
         assert units_until_upgrade >= 0, "We cannot have negative units"
         assert level >= 0 and level <= 14, "Only level between 0 and 14 are allowed"
-        self.id = id
+        self.uid = uid
         self.name = name
+        self.player = player
         self.population = population
         self.units_until_upgrade = units_until_upgrade
         self.position = position
@@ -30,8 +32,9 @@ class Base():
  
     def to_dict(self):
         return {
-            "id": self.id,
+            "uid": self.uid,
             "name": self.name,
+            "player": self.player,
             "population": self.population,
             "level": self.level, 
             "units_until_upgrade": self.units_until_upgrade,
@@ -72,8 +75,9 @@ class UserAction():
 
     def to_dict(self):
         return {
-            "src": self.src_base.id,
-            "dest": self.dest_base.id
+            "src": self.src_base.uid,
+            "dest": self.dest_base.uid,
+            "amount": self.amount
         }
 
 @dataclass
@@ -111,6 +115,7 @@ class Action():
     uuid: UUID
     player: int
     amount: int
+    travelled: int
  
     def __init__(self, player: int, src_base: Base,
                  dest_base: Base, amount: int):
@@ -119,14 +124,19 @@ class Action():
         self.src_base = src_base
         self.dest_base = dest_base
         self.amount = amount
+        self.travelled = 0
 
     def to_dict(self):
         return {
             "uuid": self.uuid,
-            "src": self.src_base.id,
-            "dest": self.dest_base.id,
+            "src": self.src_base.uid,
+            "dest": self.dest_base.uid,
             "player": self.player,
-            "amount": self.amount
+            "amount": self.amount,
+            "progress": {
+                "distance": compute_euclid_distance(self.src_base.position, self.dest_base.position),
+                "amount": self.travelled
+            }
         }
 
 

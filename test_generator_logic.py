@@ -2,7 +2,7 @@ import generator_logic
 import unittest
 
 class Testing(unittest.TestCase):
-    def test_correct_storing_number_of_players(self):
+    def test_correct_storing_number_of_bases(self):
         config = generator_logic.generate_random_map(
             5,
             2,
@@ -12,7 +12,7 @@ class Testing(unittest.TestCase):
         )
         self.assertEqual(len([*config]), 5, msg="Not five player are generated")
 
-    def test_correct_storing_number_of_players(self):
+    def test_correct_storing_number_of_bases(self):
         config = generator_logic.generate_random_map(
             5,
             2,
@@ -35,8 +35,8 @@ class Testing(unittest.TestCase):
             [-5, 5]
         )
         for c in config:
-            self.assertGreaterEqual(c.position[1], -10, msg=f"Y is not greater than -10 for player {c.id}")
-            self.assertLessEqual(c.position[1], 10, msg=f"Y is not lower than 10 for player {c.id}")
+            self.assertGreaterEqual(c.position[1], -10, msg=f"Y is not greater than -10 for player {c.uid}")
+            self.assertLessEqual(c.position[1], 10, msg=f"Y is not lower than 10 for player {c.uid}")
 
     def test_corret_z_position_stored(self):
         config = generator_logic.generate_random_map(
@@ -47,8 +47,8 @@ class Testing(unittest.TestCase):
             [-5, 5]
         )
         for c in config:
-            self.assertGreaterEqual(c.position[2], -5, msg=f"Z is not greater than -5 for player {c.id}")
-            self.assertLessEqual(c.position[2], 5, msg=f"Z is not lower than 5 for player {c.id}")
+            self.assertGreaterEqual(c.position[2], -5, msg=f"Z is not greater than -5 for player {c.uid}")
+            self.assertLessEqual(c.position[2], 5, msg=f"Z is not lower than 5 for player {c.uid}")
 
     def test_corret_x_position_stored(self):
         config = generator_logic.generate_random_map(
@@ -59,10 +59,10 @@ class Testing(unittest.TestCase):
             [-5, 5]
         )
         for c in config:
-            self.assertGreaterEqual(c.position[0], -50, msg=f"X is not greater than -50 for player {c.id}")
-            self.assertLessEqual(c.position[0], 50, msg=f"X is not lower than 50 for player {c.id}")
+            self.assertGreaterEqual(c.position[0], -50, msg=f"X is not greater than -50 for player {c.uid}")
+            self.assertLessEqual(c.position[0], 50, msg=f"X is not lower than 50 for player {c.uid}")
 
-    def test_assert_error_number_of_players(self):
+    def test_assert_error_number_of_bases(self):
         with self.assertRaises(AssertionError) as cm:
             generator_logic.generate_random_map(
                 1,
@@ -71,7 +71,7 @@ class Testing(unittest.TestCase):
                 [-10, 10],
                 [-5, 5]
             ).__next__()
-        self.assertEqual(str(cm.exception), "At least two players are mandatory")
+        self.assertEqual(str(cm.exception), "At least two bases are mandatory")
   
     def test_assert_error_max_level(self):
         with self.assertRaises(AssertionError) as cm:
