@@ -317,7 +317,7 @@ def compute_user_action(bases: list[generator_state.Base], u_action: generator_s
     # Handle Transfer/Attack
     action = generator_state.Action(
         game_state.player,
-        src_base,  # Pass the base object, not the population
+        src_base,  # Pass the base object
         dest_base,  # Pass the base object
         u_action.amount
     )
@@ -340,7 +340,7 @@ def compute_action(bases: list[generator_state.Base], action: generator_state.Ac
     Raises:
         BaseNotFoundError: When source or destination base cannot be found
     """
-    # Finde Quell- und Zielbasis
+    # Find source and destination base
     src_base = None
     dest_base = None
     for base in bases:
@@ -356,22 +356,22 @@ def compute_action(bases: list[generator_state.Base], action: generator_state.Ac
     if dest_base is None:
         raise BaseNotFoundError(action.dest_base, "destination")
 
-    # Berechne die Gesamtdistanz zwischen den Basen
+    # Calculate total distance between bases
     total_distance = generator_state.compute_euclid_distance(src_base.position, dest_base.position)
     
-    # Erhöhe travelled um 1 für diesen Tick
+    # Increase travelled by 1 for this tick
     action.travelled += 1
     
-    # Wenn noch nicht am Ziel, bewege weiter
+    # If not at destination yet, continue moving
     if action.travelled < total_distance:
-        # Nach 10 Schritten stirbt pro Tick ein Soldat
+        # After 10 steps, one troop dies per tick
         if action.travelled > 10:
             action.amount = max(0, action.amount - 1)
             if action.amount == 0:
                 return None
         return action
     
-    # Truppen sind am Ziel angekommen
+    # Troops have reached their destination
     dest_base.population += action.amount
     return dest_base
 
