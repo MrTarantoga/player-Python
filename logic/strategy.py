@@ -177,4 +177,42 @@ def decide(gameState: GameState) -> List[PlayerAction]:
     
     return iterate_bases(other_bases, our_bases + empty_bases, gameState.config)
 
+def find_player_base(bases, player_id):
+    """
+    Find the first base belonging to a player
+    
+    Args:
+        bases: List of bases to search
+        player_id: ID of the player to find base for
+        
+    Returns:
+        Base: First base found belonging to the player
+        
+    Raises:
+        ValueError: If no base is found for the player
+    """
+    for base in bases:
+        if base.player == player_id:
+            return base
+    raise ValueError(f"No base found for player {player_id}")
+
+def find_player_bases(bases, player_id):
+    """
+    Find all bases belonging to a player
+    
+    Args:
+        bases: List of bases to search
+        player_id: ID of the player to find bases for
+        
+    Returns:
+        list[Base]: All bases belonging to the player
+        
+    Raises:
+        ValueError: If no bases are found for the player
+    """
+    player_bases = [base for base in bases if base.player == player_id]
+    if not player_bases:
+        raise ValueError(f"No bases found for player {player_id}")
+    return player_bases
+
     
