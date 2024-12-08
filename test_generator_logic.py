@@ -167,6 +167,9 @@ class TestActionDefinition(unittest.TestCase):
                 base.player = 2
                 
         src_base = self.bases[0]
+        # Ensure enough troops for the test
+        src_base.population = 20  # Set higher population before creating action
+            
         action = generator_state.UserAction(src_base, src_base, 5)
         
         with self.assertRaises(generator_logic.NoBasesForPlayerError):
