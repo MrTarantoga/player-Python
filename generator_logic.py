@@ -3,7 +3,7 @@ from coolname import generate_slug
 import random
 from collections.abc import Generator
 from enum import Enum
-from typing import Optional, Union
+from typing import Union
 
 # Configuration of base levels with their corresponding classes
 base_level_config = {
